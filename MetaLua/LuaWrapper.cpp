@@ -21,7 +21,7 @@ void LuaWrapper::Clear() {
 }
 
 void LuaWrapper::DoScript(const char* file) {
-    luaL_dofile(m_luaState, "Test.lua");
+    luaL_dofile(m_luaState, file);
 }
 
 DECL_NAMESPACE_METALUA_END
