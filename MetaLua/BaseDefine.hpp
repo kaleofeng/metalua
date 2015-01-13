@@ -1,5 +1,5 @@
-#ifndef _METALUA_DEFINE_HPP_
-#define _METALUA_DEFINE_HPP_
+#ifndef _METALUA_BASEDEFINE_HPP_
+#define _METALUA_BASEDEFINE_HPP_
 
 #include <cstdint>
 #include <cstring>
@@ -16,7 +16,7 @@ DECL_NAMESPACE_METALUA_BEGIN
 template<typename T>
 struct UserData {
     UserData(T object) : m_object(object) {}
-    ~UserData() { }
+    ~UserData() {}
 
     T m_object;
 };
@@ -54,42 +54,42 @@ inline const char* ReadToCpp(lua_State *L, int index) {
 
 template<>
 inline int8_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<int8_t>(lua_tonumber(L, index));
+    return static_cast<int8_t>(lua_tointeger(L, index));
 };
 
 template<>
 inline uint8_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<uint8_t>(lua_tonumber(L, index));
+    return static_cast<uint8_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline int16_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<int16_t>(lua_tonumber(L, index));
+    return static_cast<int16_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline uint16_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<uint16_t>(lua_tonumber(L, index));
+    return static_cast<uint16_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline int32_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<int32_t>(lua_tonumber(L, index));
+    return static_cast<int32_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline uint32_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<uint32_t>(lua_tonumber(L, index));
+    return static_cast<uint32_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline int64_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<int64_t>(lua_tonumber(L, index));
+    return static_cast<int64_t>(lua_tointeger(L, index));
 }
 
 template<>
 inline uint64_t ReadToCpp(lua_State *L, int index) {
-    return static_cast<uint64_t>(lua_tonumber(L, index));
+    return static_cast<uint64_t>(lua_tointeger(L, index));
 }
 
 template<>
@@ -148,44 +148,42 @@ inline void PushToLua(lua_State *L, const char* data) {
 
 template<>
 inline void PushToLua(lua_State *L, int8_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, uint8_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, int16_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, uint16_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, int32_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, uint32_t data) {
-    lua_pushnumber(L, data);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, int64_t data) {
-    LUA_NUMBER number = static_cast<LUA_NUMBER>(data);
-    lua_pushnumber(L, number);
+    lua_pushinteger(L, data);
 }
 
 template<>
 inline void PushToLua(lua_State *L, uint64_t data) {
-    LUA_NUMBER number = static_cast<LUA_NUMBER>(data);
-    lua_pushnumber(L, number);
+    lua_pushinteger(L, data);
 }
 
 template<>
@@ -266,4 +264,4 @@ DECL_NAMESPACE_METALUA_END
 #define ARG_LIST_8 ARG_LIST_7, ReadToCpp<P1>(L, 9)
 #define ARG_LIST_9 ARG_LIST_8, ReadToCpp<P1>(L, 10)
 
-#endif // _METALUA_DEFINE_HPP_
+#endif // _METALUA_BASEDEFINE_HPP_

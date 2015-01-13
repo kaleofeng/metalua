@@ -4,7 +4,7 @@
 #include <cassert>
 #include <new>
 
-#include "MetaLua/Define.hpp"
+#include "MetaLua/BaseDefine.hpp"
 
 DECL_NAMESPACE_METALUA_BEGIN
 
