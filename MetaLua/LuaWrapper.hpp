@@ -2,6 +2,7 @@
 #define _METALUA_WRAPPER_HPP_
 
 #include "MetaLua/ClassDefine.hpp"
+#include "MetaLua/GlobalDefine.hpp"
 
 DECL_NAMESPACE_METALUA_BEGIN
 
@@ -37,6 +38,16 @@ public:
     template<typename T>
     void RegisterObject(const char* name, T* object) {
         RegisterObjectToLua<T>(m_luaState, name, object);
+    }
+
+    template<typename T>
+    T GetVariable(const char* name) {
+        return GetGlobalVariable<T>(m_luaState, name);
+    }
+
+    template<typename R, typename... Args>
+    R InvokeFunction(const char*name, Args... args) {
+        return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
     }
 
 private:

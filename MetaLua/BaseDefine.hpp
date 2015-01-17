@@ -34,71 +34,76 @@ struct LuaToCpp {
 };
 
 template<typename T>
-inline T ReadToCpp(lua_State *L, int index) {
+inline T ReadToCpp(lua_State* L, int index) {
     if(!lua_isuserdata(L, index)) {
-        lua_pushstring(L, "this arg is not a userdata!\n");
+        lua_pushstring(L, "This arg is not a userdata.\n");
         lua_error(L);
     }
     return LuaToCpp<T>::ConvertUserdata(L, index);
 }
 
 template<>
-inline bool ReadToCpp(lua_State *L, int index) { 
+inline void ReadToCpp(lua_State* L, int index) {
+    return;
+}
+
+template<>
+inline bool ReadToCpp(lua_State* L, int index) { 
     return lua_toboolean(L, index) ? true : false;
 }
 
 template<>
-inline const char* ReadToCpp(lua_State *L, int index) {
+inline const char* ReadToCpp(lua_State* L, int index) {
     return static_cast<const char*>(lua_tostring(L, index));
 }
 
 template<>
-inline int8_t ReadToCpp(lua_State *L, int index) {
+inline int8_t ReadToCpp(lua_State* L, int index) {
     return static_cast<int8_t>(lua_tointeger(L, index));
 };
 
 template<>
-inline uint8_t ReadToCpp(lua_State *L, int index) {
+inline uint8_t ReadToCpp(lua_State* L, int index) {
     return static_cast<uint8_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline int16_t ReadToCpp(lua_State *L, int index) {
+inline int16_t ReadToCpp(lua_State* L, int index) {
     return static_cast<int16_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline uint16_t ReadToCpp(lua_State *L, int index) {
+inline uint16_t ReadToCpp(lua_State* L, int index) {
     return static_cast<uint16_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline int32_t ReadToCpp(lua_State *L, int index) {
+inline int32_t ReadToCpp(lua_State* L, int index) {
     return static_cast<int32_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline uint32_t ReadToCpp(lua_State *L, int index) {
+inline uint32_t ReadToCpp(lua_State* L, int index) {
     return static_cast<uint32_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline int64_t ReadToCpp(lua_State *L, int index) {
+inline int64_t ReadToCpp(lua_State* L, int index) {
     return static_cast<int64_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline uint64_t ReadToCpp(lua_State *L, int index) {
+inline uint64_t ReadToCpp(lua_State* L, int index) {
     return static_cast<uint64_t>(lua_tointeger(L, index));
 }
 
 template<>
-inline float ReadToCpp(lua_State *L, int index) {
+inline float ReadToCpp(lua_State* L, int index) {
     return static_cast<float>(lua_tonumber(L, index));
 }
 
 template<>
-inline double ReadToCpp(lua_State *L, int index) {
+inline double ReadToCpp(lua_State* L, int index) {
     return static_cast<double>(lua_tonumber(L, index));
 }
 
@@ -127,73 +132,84 @@ struct CppToLua {
 };
 
 template<typename T>
-inline void PushToLua(lua_State *L, T data) {
+inline void PushToLua(lua_State* L, T data) {
     CppToLua<T>::ConvertUserdata(L, data);
 };
 
 template<typename T>
-inline void PushToLua(lua_State *L, T* data) {
+inline void PushToLua(lua_State* L, T* data) {
     CppToLua<T>::ConvertUserdata(L, data);
 };
 
 template<>
-inline void PushToLua(lua_State *L, bool data) {
+inline void PushToLua(lua_State* L, bool data) {
     lua_pushboolean(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, const char* data) {
+inline void PushToLua(lua_State* L, const char* data) {
     lua_pushstring(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, int8_t data) {
+inline void PushToLua(lua_State* L, int8_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, uint8_t data) {
+inline void PushToLua(lua_State* L, uint8_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, int16_t data) {
+inline void PushToLua(lua_State* L, int16_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, uint16_t data) {
+inline void PushToLua(lua_State* L, uint16_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, int32_t data) {
+inline void PushToLua(lua_State* L, int32_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, uint32_t data) {
+inline void PushToLua(lua_State* L, uint32_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, int64_t data) {
+inline void PushToLua(lua_State* L, int64_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, uint64_t data) {
+inline void PushToLua(lua_State* L, uint64_t data) {
     lua_pushinteger(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, float data) {
+inline void PushToLua(lua_State* L, float data) {
     lua_pushnumber(L, data);
 }
 
 template<>
-inline void PushToLua(lua_State *L, double data) {
+inline void PushToLua(lua_State* L, double data) {
     lua_pushnumber(L, data);
+}
+
+template<typename T, typename... Args>
+inline void VaradicPushToLua(lua_State* L, T t, Args... args) {
+    PushToLua(L, t);
+    VaradicPushToLua(L, args...);
+}
+
+template<typename T>
+inline void VaradicPushToLua(lua_State* L, T t) {
+    PushToLua(L, t);
 }
 
 DECL_NAMESPACE_METALUA_END
