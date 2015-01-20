@@ -13,6 +13,8 @@
 
 DECL_NAMESPACE_METALUA_BEGIN
 
+struct LuaTable;
+
 template<typename T>
 struct UserData {
     UserData(T object) : m_object(object) {}
@@ -25,7 +27,7 @@ struct UserData {
 
 template<typename T>
 struct LuaToCpp {
-    inline static T ConvertUserdata(lua_State* L, int index){
+    static T ConvertUserdata(lua_State* L, int index){
         typedef UserData<T> UserData_t;
         auto memory = lua_touserdata(L, index);
         auto userData = static_cast<UserData_t*>(memory);
@@ -34,7 +36,7 @@ struct LuaToCpp {
 };
 
 template<typename T>
-inline T ReadToCpp(lua_State* L, int index) {
+T ReadToCpp(lua_State* L, int index) {
     if(!lua_isuserdata(L, index)) {
         lua_pushstring(L, "This arg is not a userdata.\n");
         lua_error(L);
@@ -42,70 +44,20 @@ inline T ReadToCpp(lua_State* L, int index) {
     return LuaToCpp<T>::ConvertUserdata(L, index);
 }
 
-template<>
-inline void ReadToCpp(lua_State* L, int index) {
-    return;
-}
-
-template<>
-inline bool ReadToCpp(lua_State* L, int index) { 
-    return lua_toboolean(L, index) ? true : false;
-}
-
-template<>
-inline const char* ReadToCpp(lua_State* L, int index) {
-    return static_cast<const char*>(lua_tostring(L, index));
-}
-
-template<>
-inline int8_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<int8_t>(lua_tointeger(L, index));
-};
-
-template<>
-inline uint8_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<uint8_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline int16_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<int16_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline uint16_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<uint16_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline int32_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<int32_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline uint32_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<uint32_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline int64_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<int64_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline uint64_t ReadToCpp(lua_State* L, int index) {
-    return static_cast<uint64_t>(lua_tointeger(L, index));
-}
-
-template<>
-inline float ReadToCpp(lua_State* L, int index) {
-    return static_cast<float>(lua_tonumber(L, index));
-}
-
-template<>
-inline double ReadToCpp(lua_State* L, int index) {
-    return static_cast<double>(lua_tonumber(L, index));
-}
+template<> void ReadToCpp(lua_State* L, int index);
+template<> bool ReadToCpp(lua_State* L, int index);
+template<> const char* ReadToCpp(lua_State* L, int index);
+template<> int8_t ReadToCpp(lua_State* L, int index);
+template<> uint8_t ReadToCpp(lua_State* L, int index);
+template<> int16_t ReadToCpp(lua_State* L, int index);
+template<> uint16_t ReadToCpp(lua_State* L, int index);
+template<> int32_t ReadToCpp(lua_State* L, int index);
+template<> uint32_t ReadToCpp(lua_State* L, int index);
+template<> int64_t ReadToCpp(lua_State* L, int index);
+template<> uint64_t ReadToCpp(lua_State* L, int index);
+template<> float ReadToCpp(lua_State* L, int index);
+template<> double ReadToCpp(lua_State* L, int index);
+template<> LuaTable ReadToCpp(lua_State* L, int index);
 
 /* push a value from cpp to lua */
 
@@ -123,7 +75,7 @@ public:
 
 template<typename T>
 struct CppToLua {
-    inline static void ConvertUserdata(lua_State* L, T object){
+    static void ConvertUserdata(lua_State* L, T object){
         auto memory = lua_newuserdata(L, sizeof(T));
         new(memory) UserData<T>(object);
         luaL_getmetatable(L, ClassInfo<T>::Name());
@@ -132,84 +84,34 @@ struct CppToLua {
 };
 
 template<typename T>
-inline void PushToLua(lua_State* L, T data) {
+void PushToLua(lua_State* L, T data) {
     CppToLua<T>::ConvertUserdata(L, data);
 };
 
-template<typename T>
-inline void PushToLua(lua_State* L, T* data) {
-    CppToLua<T>::ConvertUserdata(L, data);
-};
-
-template<>
-inline void PushToLua(lua_State* L, bool data) {
-    lua_pushboolean(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, const char* data) {
-    lua_pushstring(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, int8_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, uint8_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, int16_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, uint16_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, int32_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, uint32_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, int64_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, uint64_t data) {
-    lua_pushinteger(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, float data) {
-    lua_pushnumber(L, data);
-}
-
-template<>
-inline void PushToLua(lua_State* L, double data) {
-    lua_pushnumber(L, data);
-}
+template<> void PushToLua(lua_State* L, bool data);
+template<> void PushToLua(lua_State* L, char* data);
+template<> void PushToLua(lua_State* L, const char* data);
+template<> void PushToLua(lua_State* L, int8_t data);
+template<> void PushToLua(lua_State* L, uint8_t data);
+template<> void PushToLua(lua_State* L, int16_t data);
+template<> void PushToLua(lua_State* L, uint16_t data);
+template<> void PushToLua(lua_State* L, int32_t data);
+template<> void PushToLua(lua_State* L, uint32_t data);
+template<> void PushToLua(lua_State* L, int64_t data);
+template<> void PushToLua(lua_State* L, uint64_t data);
+template<> void PushToLua(lua_State* L, float data);
+template<> void PushToLua(lua_State* L, double data);
+template<> void PushToLua(lua_State* L, LuaTable data);
 
 template<typename T, typename... Args>
-inline void VaradicPushToLua(lua_State* L, T t, Args... args) {
-    PushToLua(L, t);
+void VaradicPushToLua(lua_State* L, T t, Args... args) {
+    PushToLua<T>(L, t);
     VaradicPushToLua(L, args...);
 }
 
 template<typename T>
-inline void VaradicPushToLua(lua_State* L, T t) {
-    PushToLua(L, t);
+void VaradicPushToLua(lua_State* L, T t) {
+    PushToLua<T>(L, t);
 }
 
 DECL_NAMESPACE_METALUA_END

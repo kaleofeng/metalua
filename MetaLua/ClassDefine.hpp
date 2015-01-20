@@ -219,25 +219,4 @@ void RegisterClassToLua(lua_State* L, const char* className) {
 
 DECL_NAMESPACE_METALUA_END
 
-/* macros for register a class */
-
-#define OFFSET(Class, Var) (int(&((Class*)0)->Var))
-
-#define DEF_LUA_CLASS_BEGIN(Class) \
-static void RegisterToLua(const char* className) { \
-    typedef Class T; \
-    g_luaWrapper->RegisterClass<T>(className);
-
-#define DEF_METHOD(Func) \
-    g_luaWrapper->RegisterMethod(#Func, &T::Func);
-
-#define DEF_MEMBER(Var) \
-    g_luaWrapper->RegisterMember<T>(#Var, &T::Var);
-
-#define DEF_END \
-}
-
-#define REGISTER_LUA_CALSS(Class) \
-Class::RegisterToLua(#Class);
-
 #endif // _METALUA_CLASSDEFINE_HPP_

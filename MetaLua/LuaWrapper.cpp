@@ -6,7 +6,7 @@ LuaWrapper::LuaWrapper() {}
 
 LuaWrapper::~LuaWrapper() {}
 
-bool LuaWrapper::Init() {
+bool LuaWrapper::Initialize() {
     m_luaState = luaL_newstate();
     if (m_luaState == nullptr) {
         return false;
@@ -16,7 +16,7 @@ bool LuaWrapper::Init() {
     return true;
 }
 
-void LuaWrapper::Clear() {
+void LuaWrapper::Finalize() {
     lua_close(m_luaState);
 }
 
@@ -28,13 +28,13 @@ DECL_NAMESPACE_METALUA_END
 
 NS_METALUA::LuaWrapper* g_luaWrapper = nullptr;
 
-bool LuaInit() {
+bool LuaStartup() {
     g_luaWrapper = new NS_METALUA::LuaWrapper();
-    return g_luaWrapper->Init();
+    return g_luaWrapper->Initialize();
 }
 
-void LuaClear() {
-    g_luaWrapper->Clear();
+void LuaCleanup() {
+    g_luaWrapper->Finalize();
     delete g_luaWrapper;
     g_luaWrapper = nullptr;
 }

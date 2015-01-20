@@ -3,6 +3,7 @@
 
 #include "MetaLua/ClassDefine.hpp"
 #include "MetaLua/GlobalDefine.hpp"
+#include "MetaLua/LuaTable.hpp"
 
 DECL_NAMESPACE_METALUA_BEGIN
 
@@ -13,9 +14,9 @@ public:
     ~LuaWrapper();
 
 public:
-    bool Init();
+    bool Initialize();
 
-    void Clear();
+    void Finalize();
 
     void DoScript(const char* file);
 
@@ -40,14 +41,28 @@ public:
         RegisterObjectToLua<T>(m_luaState, name, object);
     }
 
+    template<typename R, typename... Args>
+    R InvokeFunction(const char* name, Args... args) {
+        return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
+    }
+
     template<typename T>
     T GetVariable(const char* name) {
         return GetGlobalVariable<T>(m_luaState, name);
     }
 
-    template<typename R, typename... Args>
-    R InvokeFunction(const char*name, Args... args) {
-        return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
+    LuaTable GetTable(const char* name) {
+        lua_getglobal(m_luaState, name);
+        if (!lua_istable(m_luaState, -1)) {
+            lua_newtable(m_luaState);
+            lua_setglobal(m_luaState, name);
+        }
+        const auto index = lua_gettop(m_luaState);
+        return LuaTable(m_luaState, index);
+    }
+
+    lua_State* GetLuaState() {
+        return m_luaState;
     }
 
 private:
@@ -57,7 +72,26 @@ private:
 DECL_NAMESPACE_METALUA_END
 
 extern NS_METALUA::LuaWrapper* g_luaWrapper;
-extern bool LuaInit();
-extern void LuaClear();
+extern bool LuaStartup();
+extern void LuaCleanup();
+
+/* macros for register a class */
+
+#define DEF_LUA_CLASS_BEGIN(Class) \
+static void RegisterToLua(const char* className) { \
+    typedef Class T; \
+    g_luaWrapper->RegisterClass<T>(className);
+
+#define DEF_METHOD(Func) \
+    g_luaWrapper->RegisterMethod(#Func, &T::Func);
+
+#define DEF_MEMBER(Var) \
+    g_luaWrapper->RegisterMember<T>(#Var, &T::Var);
+
+#define DEF_END \
+}
+
+#define REGISTER_LUA_CALSS(Class) \
+Class::RegisterToLua(#Class);
 
 #endif // _METALUA_WRAPPER_HPP_
