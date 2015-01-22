@@ -144,6 +144,36 @@ void RegisterObjectToLua(lua_State* L, const char* name, T* object) {
     lua_setglobal(L, name);
 }
 
+/* inherit parent class */
+
+template<typename T, typename P>
+void InheritParentToLua(lua_State* L) {
+    luaL_getmetatable(L, ClassInfo<T>::Name());
+    if (lua_istable(L, -1)) {
+        lua_pushstring(L, "__parent");
+        luaL_getmetatable(L, ClassInfo<P>::Name());
+        lua_rawset(L, -3);
+    }
+    lua_pop(L, 1);
+}
+
+inline void InvokeParent(lua_State *L) {
+    lua_pushstring(L, "__parent");
+    lua_rawget(L, -2);
+    if (lua_istable(L, -1)) {
+        lua_pushvalue(L, 2);
+        lua_rawget(L, -2);
+        if (!lua_isnil(L, -1)) {
+            lua_remove(L, -2);
+        }
+        else {
+            lua_remove(L, -1);
+            InvokeParent(L);
+            lua_remove(L, -2);
+        }
+    }
+}
+
 /* set metatable for class */
 
 template<typename T>
@@ -152,13 +182,17 @@ inline int MetaGet(lua_State* L) {
     lua_pushvalue(L, 2);
     lua_rawget(L, -2);
     if (lua_isuserdata(L, -1)) {
-        lua_remove(L, -2);
         auto memory = lua_touserdata(L, -1);
         auto member = static_cast<GenericMember*>(memory);
         member->Get(L);
+        lua_remove(L, -2);
     }
     else if (lua_isnil(L, -1)) {
-        //lua_remove(L, -1);
+        lua_remove(L, -1);
+        InvokeParent(L);
+        if (lua_isnil(L, -1)) {
+            lua_error(L);
+        }
     }
     lua_remove(L, -2);
     return 1;
@@ -175,9 +209,13 @@ inline int MetaSet(lua_State* L) {
         member->Set(L);
     }
     else if (lua_isnil(L, -1)) {
-        lua_pushvalue(L, 2);
-        lua_pushvalue(L, 3);
-        lua_rawset(L, -4);
+        lua_remove(L, -1);
+        InvokeParent(L);
+        if (lua_isnil(L, -1)) {
+            lua_pushvalue(L, 2);
+            lua_pushvalue(L, 3);
+            lua_rawset(L, -4);
+        }
     }
     lua_settop(L, 3);
     return 0;

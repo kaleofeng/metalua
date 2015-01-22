@@ -41,6 +41,11 @@ public:
         RegisterObjectToLua<T>(m_luaState, name, object);
     }
 
+    template<typename T, typename P>
+    void InheritParent() {
+        return InheritParentToLua<T, P>(m_luaState);
+    }
+
     template<typename R, typename... Args>
     R InvokeFunction(const char* name, Args... args) {
         return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
@@ -87,6 +92,10 @@ static void RegisterToLua(const char* className) { \
 
 #define DEF_MEMBER(Var) \
     g_luaWrapper->RegisterMember<T>(#Var, &T::Var);
+
+#define INHERIT_PARENT(Parent) \
+    typedef Parent P; \
+    g_luaWrapper->InheritParent<T, P>();
 
 #define DEF_END \
 }
