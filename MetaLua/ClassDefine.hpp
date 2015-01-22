@@ -163,14 +163,11 @@ inline void InvokeParent(lua_State *L) {
     if (lua_istable(L, -1)) {
         lua_pushvalue(L, 2);
         lua_rawget(L, -2);
-        if (!lua_isnil(L, -1)) {
-            lua_remove(L, -2);
-        }
-        else {
+        if (lua_isnil(L, -1)) {
             lua_remove(L, -1);
             InvokeParent(L);
-            lua_remove(L, -2);
         }
+        lua_remove(L, -2);
     }
 }
 
@@ -181,6 +178,10 @@ inline int MetaGet(lua_State* L) {
     lua_getmetatable(L, 1);
     lua_pushvalue(L, 2);
     lua_rawget(L, -2);
+    if (lua_isnil(L, -1)) {
+        lua_remove(L, -1);
+        InvokeParent(L);
+    }
     if (lua_isuserdata(L, -1)) {
         auto memory = lua_touserdata(L, -1);
         auto member = static_cast<GenericMember*>(memory);
@@ -188,11 +189,7 @@ inline int MetaGet(lua_State* L) {
         lua_remove(L, -2);
     }
     else if (lua_isnil(L, -1)) {
-        lua_remove(L, -1);
-        InvokeParent(L);
-        if (lua_isnil(L, -1)) {
-            lua_error(L);
-        }
+        lua_error(L);
     }
     lua_remove(L, -2);
     return 1;
@@ -203,6 +200,10 @@ inline int MetaSet(lua_State* L) {
     lua_getmetatable(L, 1);
     lua_pushvalue(L, 2);
     lua_rawget(L, -2);
+    if (lua_isnil(L, -1)) {
+        lua_remove(L, -1);
+        InvokeParent(L);
+    }
     if (lua_isuserdata(L, -1)) {
         auto memory = lua_touserdata(L, -1);
         auto member = static_cast<GenericMember*>(memory);
