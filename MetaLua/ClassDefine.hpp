@@ -188,6 +188,9 @@ inline int MetaGet(lua_State* L) {
         member->Get(L);
         lua_remove(L, -2);
     }
+    else if (lua_isfunction(L, -1)) {
+        // methods
+    }
     else if (lua_isnil(L, -1)) {
         lua_error(L);
     }

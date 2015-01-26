@@ -173,13 +173,13 @@ DECL_NAMESPACE_METALUA_END
 
 #define ARG_LIST_0
 #define ARG_LIST_1 ARG_LIST_0  ReadToCpp<P1>(L, 2)
-#define ARG_LIST_2 ARG_LIST_1, ReadToCpp<P1>(L, 3)
-#define ARG_LIST_3 ARG_LIST_2, ReadToCpp<P1>(L, 4)
-#define ARG_LIST_4 ARG_LIST_3, ReadToCpp<P1>(L, 5)
-#define ARG_LIST_5 ARG_LIST_4, ReadToCpp<P1>(L, 6)
-#define ARG_LIST_6 ARG_LIST_5, ReadToCpp<P1>(L, 7)
-#define ARG_LIST_7 ARG_LIST_6, ReadToCpp<P1>(L, 8)
-#define ARG_LIST_8 ARG_LIST_7, ReadToCpp<P1>(L, 9)
-#define ARG_LIST_9 ARG_LIST_8, ReadToCpp<P1>(L, 10)
+#define ARG_LIST_2 ARG_LIST_1, ReadToCpp<P2>(L, 3)
+#define ARG_LIST_3 ARG_LIST_2, ReadToCpp<P3>(L, 4)
+#define ARG_LIST_4 ARG_LIST_3, ReadToCpp<P4>(L, 5)
+#define ARG_LIST_5 ARG_LIST_4, ReadToCpp<P5>(L, 6)
+#define ARG_LIST_6 ARG_LIST_5, ReadToCpp<P6>(L, 7)
+#define ARG_LIST_7 ARG_LIST_6, ReadToCpp<P7>(L, 8)
+#define ARG_LIST_8 ARG_LIST_7, ReadToCpp<P8>(L, 9)
+#define ARG_LIST_9 ARG_LIST_8, ReadToCpp<P9>(L, 10)
 
 #endif // _METALUA_BASEDEFINE_HPP_
