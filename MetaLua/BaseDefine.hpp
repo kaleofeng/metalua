@@ -114,6 +114,8 @@ void VaradicPushToLua(lua_State* L, T t) {
     PushToLua<T>(L, t);
 }
 
+/* macros */
+
 DECL_NAMESPACE_METALUA_END
 
 #define TYPENAME_LIST_0 typename R, typename T

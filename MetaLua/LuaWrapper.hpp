@@ -41,6 +41,11 @@ public:
         RegisterObjectToLua<T>(m_luaState, name, object);
     }
 
+    template<typename T>
+    void RegisterVariable(const char* name, T variable) {
+        RegisterVariableToLua<T>(m_luaState, name, variable);
+    }
+
     template<typename T, typename P>
     void InheritParent() {
         return InheritParentToLua<T, P>(m_luaState);

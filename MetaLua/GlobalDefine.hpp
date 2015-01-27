@@ -4,6 +4,12 @@
 #include "MetaLua/BaseDefine.hpp"
 
 template<typename T>
+void RegisterVariableToLua(lua_State* L, const char* name, T variable) {
+    PushToLua<T>(L, variable);
+    lua_setglobal(L, name);
+}
+
+template<typename T>
 T GetGlobalVariable(lua_State* L, const char* name) {
     lua_getglobal(L, name);
     return ReadToCpp<T>(L, -1);

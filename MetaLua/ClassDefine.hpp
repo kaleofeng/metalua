@@ -97,6 +97,7 @@ DEF_REGISTER_METHOD(8)
 DEF_REGISTER_METHOD(9)
 
 /* register class member */
+
 struct GenericMember {
     virtual int Get(lua_State* L) = 0;
     virtual int Set(lua_State* L) = 0;
@@ -110,7 +111,7 @@ struct MemberData : public GenericMember {
     int Get(lua_State* L) override final {
         auto obj = ReadToCpp<T*>(L, 1);
         auto member = obj->*m_var;
-        PushToLua(L, member);
+        PushToLua<V>(L, member);
         return 1;
     }
     int Set(lua_State* L) override final {
