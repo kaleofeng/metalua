@@ -190,10 +190,10 @@ struct MemberData : public GenericMember {
     }
 };
 
-template<typename T, typename P>
-void RegisterMemberToLua(lua_State* L, const char* name, P T::*member) {
+template<typename T, typename V>
+void RegisterMemberToLua(lua_State* L, const char* name, V T::*member) {
     luaL_getmetatable(L, ClassInfo<T>::Name());
-    typedef MemberData<T, P> MemberData_t;
+    typedef MemberData<T, V> MemberData_t;
     lua_pushstring(L, name);
     auto memory = lua_newuserdata(L, sizeof(MemberData_t));
     new(memory) MemberData_t(member);
