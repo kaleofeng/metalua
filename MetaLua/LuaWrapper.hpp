@@ -22,28 +22,8 @@ public:
 
 public:
     template<typename T>
-    void RegisterClass(const char* className) {
-        RegisterClassToLua<T>(m_luaState, className);
-    }
-
-    template<typename F>
-    void RegisterMethod(const char* funcName, F func) {
-        RegisterMethodToLua(m_luaState, funcName, func);
-    }
-
-    template<typename T, typename V>
-    void RegisterMember(const char* varName, V var) {
-        RegisterMemberToLua<T>(m_luaState, varName, var);
-    }
-
-    template<typename T>
-    void RegisterObject(const char* name, T* object) {
-        RegisterObjectToLua<T>(m_luaState, name, object);
-    }
-
-    template<typename T>
-    void RegisterVariable(const char* name, T variable) {
-        RegisterVariableToLua<T>(m_luaState, name, variable);
+    void RegisterClass(const char* name) {
+        RegisterClassToLua<T>(m_luaState, name);
     }
 
     template<typename T, typename P>
@@ -51,14 +31,39 @@ public:
         return InheritParentToLua<T, P>(m_luaState);
     }
 
+    template<typename M>
+    void RegisterMethod(const char* name, M method) {
+        RegisterMethodToLua(m_luaState, name, method);
+    }
+
+    template<typename M>
+    void RegisterMember(const char* name, M member) {
+        RegisterMemberToLua(m_luaState, name, member);
+    }
+
+    template<typename T>
+    void RegisterObject(const char* name, T* object) {
+        RegisterObjectToLua<T>(m_luaState, name, object);
+    }
+
+    template<typename F>
+    void RegisterFunction(const char* funcName, F func) {
+        RegisterFunctionToLua(m_luaState, funcName, func);
+    }
+
+    template<typename V>
+    void RegisterVariable(const char* name, V variable) {
+        RegisterVariableToLua<V>(m_luaState, name, variable);
+    }
+
     template<typename R, typename... Args>
     R InvokeFunction(const char* name, Args... args) {
         return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
     }
 
-    template<typename T>
-    T GetVariable(const char* name) {
-        return GetGlobalVariable<T>(m_luaState, name);
+    template<typename V>
+    V GetVariable(const char* name) {
+        return GetGlobalVariable<V>(m_luaState, name);
     }
 
     LuaTable GetTable(const char* name) {
@@ -96,7 +101,7 @@ static void RegisterToLua(const char* className) { \
     g_luaWrapper->RegisterMethod(#Func, &T::Func);
 
 #define DEF_MEMBER(Var) \
-    g_luaWrapper->RegisterMember<T>(#Var, &T::Var);
+    g_luaWrapper->RegisterMember(#Var, &T::Var);
 
 #define INHERIT_PARENT(Parent) \
     typedef Parent P; \
