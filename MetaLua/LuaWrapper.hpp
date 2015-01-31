@@ -23,7 +23,7 @@ public:
 public:
     template<typename T, typename P>
     void InheritParent() {
-        return InheritParentToLua<T, P>(m_luaState);
+        InheritParentToLua<T, P>(m_luaState);
     }
 
     template<typename T>

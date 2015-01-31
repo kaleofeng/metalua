@@ -2,7 +2,8 @@
 
 DECL_NAMESPACE_METALUA_BEGIN
 
-LuaWrapper::LuaWrapper() {}
+LuaWrapper::LuaWrapper()
+    : m_luaState(nullptr) {}
 
 LuaWrapper::~LuaWrapper() {}
 
