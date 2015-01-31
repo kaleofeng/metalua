@@ -33,8 +33,8 @@ struct LuaTable {
     }
 
     template<typename T>
-    void Set(const char* key, T data) {
-        PushToLua<T>(m_luaState, data);
+    void Set(const char* key, T value) {
+        PushToLua<T>(m_luaState, value);
         lua_setfield(m_luaState, m_index, key);
     }
 

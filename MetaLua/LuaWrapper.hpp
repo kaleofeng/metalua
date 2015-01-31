@@ -21,14 +21,14 @@ public:
     void DoScript(const char* file);
 
 public:
-    template<typename T>
-    void RegisterClass(const char* name) {
-        RegisterClassToLua<T>(m_luaState, name);
-    }
-
     template<typename T, typename P>
     void InheritParent() {
         return InheritParentToLua<T, P>(m_luaState);
+    }
+
+    template<typename T>
+    void RegisterClass(const char* name) {
+        RegisterClassToLua<T>(m_luaState, name);
     }
 
     template<typename M>
