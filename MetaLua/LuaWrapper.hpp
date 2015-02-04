@@ -47,8 +47,8 @@ public:
     }
 
     template<typename F>
-    void RegisterFunction(const char* funcName, F func) {
-        RegisterFunctionToLua(m_luaState, funcName, func);
+    void RegisterFunction(const char* name, F function) {
+        RegisterFunctionToLua(m_luaState, name, function);
     }
 
     template<typename V>
@@ -92,25 +92,34 @@ extern void LuaCleanup();
 
 /* macros for register a class */
 
-#define DEF_LUA_CLASS_BEGIN(Class) \
+#define METALUA_CLASS_BEGIN(Class) \
 static void RegisterToLua(const char* className) { \
-    typedef Class T; \
-    g_luaWrapper->RegisterClass<T>(className);
+typedef Class T; \
+g_luaWrapper->RegisterClass<T>(className);
 
-#define DEF_METHOD(Func) \
-    g_luaWrapper->RegisterMethod(#Func, &T::Func);
+#define DEF_METHOD(Method) \
+g_luaWrapper->RegisterMethod(#Method, &T::Method);
 
-#define DEF_MEMBER(Var) \
-    g_luaWrapper->RegisterMember(#Var, &T::Var);
+#define DEF_MEMBER(Member) \
+g_luaWrapper->RegisterMember(#Member, &T::Member);
 
 #define INHERIT_PARENT(Parent) \
-    typedef Parent P; \
-    g_luaWrapper->InheritParent<T, P>();
+typedef Parent P; \
+g_luaWrapper->InheritParent<T, P>();
 
-#define DEF_END \
+#define METALUA_CLASS_END \
 }
 
-#define REGISTER_LUA_CALSS(Class) \
+#define METALUA_REGISTER_CLASS(Class) \
 Class::RegisterToLua(#Class);
+
+#define METALUA_REGISTER_OBJECT(name, object) \
+g_luaWrapper->RegisterObject(name, object);
+
+#define METALUA_REGISTER_FUNCTION(name, function) \
+g_luaWrapper->RegisterFunction(name, function);
+
+#define METALUA_REGISTER_VARIABLE(name, variable) \
+g_luaWrapper->RegisterVariable(name, variable);
 
 #endif // _METALUA_WRAPPER_HPP_
