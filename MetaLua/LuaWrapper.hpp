@@ -13,6 +13,10 @@ public:
 
     ~LuaWrapper();
 
+    LuaWrapper(const LuaWrapper& other) = delete;
+
+    LuaWrapper& operator =(const LuaWrapper& other) = delete;
+
 public:
     bool Initialize();
 
