@@ -28,8 +28,10 @@ IF(PRODUCT_INSTALL)
     ARCHIVE DESTINATION ${LIB_DIR})
 ENDIF(PRODUCT_INSTALL)
 
-# These are used to create visual studio folders.
+IF(WIN32)
+# create visual studio folders
 SOURCE_GROUP(Lua\\Header FILES ${LUA_HEADERS})
 SOURCE_GROUP(Lua\\Source FILES ${LUA_SOURCES})
 SOURCE_GROUP(Header FILES ${SELF_HEADERS})
 SOURCE_GROUP(Source FILES ${SELF_SOURCES})
+ENDIF(WIN32)
