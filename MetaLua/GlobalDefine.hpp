@@ -155,7 +155,7 @@ DEF_REGISTER_FUNCTION(2)
 DEF_REGISTER_FUNCTION(1)
 DEF_REGISTER_FUNCTION(0)
 
-/* register variable */
+/* register global variable */
 
 template<typename V>
 void RegisterVariableToLua(lua_State* L, const char* name, V variable) {
@@ -163,7 +163,7 @@ void RegisterVariableToLua(lua_State* L, const char* name, V variable) {
     lua_setglobal(L, name);
 }
 
-/* register variable */
+/* get global variable */
 
 template<typename V>
 V GetGlobalVariable(lua_State* L, const char* name) {
@@ -171,14 +171,44 @@ V GetGlobalVariable(lua_State* L, const char* name) {
     return ReadToCpp<V>(L, -1);
 }
 
-/* invoke function */
+/* invoke global function */
 
 template<typename R, typename... Args>
-R InvokeGlobalFunction(lua_State* L, const char*name, Args... args) {
+R InvokeGlobalFunction(lua_State* L, const char* name, Args... args) {
     lua_getglobal(L, name);
+    if (!lua_isfunction(L, -1)) {
+        lua_pushstring(L, "This arg is not a function.\n");
+        lua_error(L);
+    }
+
     VaradicPushToLua(L, args...);
 
     const auto size = sizeof...(args);
+    lua_call(L, size, 1);
+
+    return ReadToCpp<R>(L, -1);
+}
+
+/* invoke table function */
+
+template<typename R, typename... Args>
+R InvokeTableFunction(lua_State* L, const char* table, const char* name, Args... args) {
+    lua_getglobal(L, table);
+    if (!lua_istable(L, -1)) {
+        lua_pushstring(L, "This arg is not a table.\n");
+        lua_error(L);
+    }
+
+    lua_getfield(L, -1, name);
+    if (!lua_isfunction(L, -1)) {
+        lua_pushstring(L, "This arg is not a function.\n");
+        lua_error(L);
+    }
+
+    lua_insert(L, -2);
+    VaradicPushToLua(L, args...);
+
+    const auto size = sizeof...(args) + 1;
     lua_call(L, size, 1);
 
     return ReadToCpp<R>(L, -1);

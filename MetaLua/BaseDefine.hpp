@@ -36,7 +36,7 @@ struct LuaToCpp {
 };
 
 template<typename T>
-T ReadToCpp(lua_State* L, int index) {
+inline T ReadToCpp(lua_State* L, int index) {
     if(!lua_isuserdata(L, index)) {
         lua_pushstring(L, "This arg is not a userdata.\n");
         lua_error(L);
@@ -62,8 +62,7 @@ template<> LuaTable ReadToCpp(lua_State* L, int index);
 /* push a value from cpp to lua */
 
 template<typename T>
-class ClassInfo {
-public:
+struct ClassInfo {
     static const char* Name(const char* name = nullptr) {
         static char s_name[32] = "";
         if (name != nullptr) {
@@ -84,7 +83,7 @@ struct CppToLua {
 };
 
 template<typename T>
-void PushToLua(lua_State* L, T data) {
+inline void PushToLua(lua_State* L, T data) {
     CppToLua<T>::ConvertUserdata(L, data);
 };
 
@@ -103,15 +102,14 @@ template<> void PushToLua(lua_State* L, float data);
 template<> void PushToLua(lua_State* L, double data);
 template<> void PushToLua(lua_State* L, LuaTable data);
 
-template<typename T, typename... Args>
-void VaradicPushToLua(lua_State* L, T t, Args... args) {
-    PushToLua<T>(L, t);
-    VaradicPushToLua(L, args...);
+inline void VaradicPushToLua(lua_State* L) {
+
 }
 
-template<typename T>
-void VaradicPushToLua(lua_State* L, T t) {
+template<typename T, typename... Args>
+inline void VaradicPushToLua(lua_State* L, T t, Args... args) {
     PushToLua<T>(L, t);
+    VaradicPushToLua(L, args...);
 }
 
 DECL_NAMESPACE_METALUA_END

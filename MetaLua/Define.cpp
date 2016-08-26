@@ -6,7 +6,7 @@ DECL_NAMESPACE_METALUA_BEGIN
 
 template<>
 void ReadToCpp(lua_State* L, int index) {
-    return;
+    lua_remove(L, index);
 }
 
 template<>
