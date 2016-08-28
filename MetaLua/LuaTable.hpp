@@ -6,6 +6,10 @@
 DECL_NAMESPACE_METALUA_BEGIN
 
 struct LuaTable {
+
+    lua_State* m_luaState{ nullptr };
+    int m_index{ 0 };
+
     LuaTable(lua_State* luaState)
         : m_luaState(luaState) {
         lua_newtable(m_luaState);
@@ -37,9 +41,6 @@ struct LuaTable {
         PushToLua<T>(m_luaState, value);
         lua_setfield(m_luaState, m_index, key);
     }
-
-    lua_State* m_luaState;
-    int m_index;
 };
 
 DECL_NAMESPACE_METALUA_END

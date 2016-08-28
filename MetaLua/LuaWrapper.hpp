@@ -8,6 +8,17 @@
 DECL_NAMESPACE_METALUA_BEGIN
 
 class LuaWrapper {
+
+public:
+    struct UserData {
+        LuaWrapper* m_luaWrapper{ nullptr };
+        int m_errroFunc{ 0 };
+    };
+
+private:
+    lua_State* m_luaState{ nullptr };
+    UserData m_userData;
+
 public:
     LuaWrapper();
 
@@ -88,9 +99,6 @@ public:
     lua_State* GetLuaState() {
         return m_luaState;
     }
-
-private:
-    lua_State* m_luaState;
 };
 
 DECL_NAMESPACE_METALUA_END

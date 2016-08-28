@@ -13,7 +13,17 @@ bool LuaWrapper::Initialize() {
         return false;
     }
 
+    G(m_luaState)->ud = &m_userData;
+    m_userData.m_luaWrapper = this;
+
     luaL_openlibs(m_luaState);
+
+    {
+        AutoStackRecover asr(m_luaState);
+        lua_pushcclosure(m_luaState, luaU_ErrorFunc, 0);
+        m_userData.m_errroFunc = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+
+    }
     return true;
 }
 

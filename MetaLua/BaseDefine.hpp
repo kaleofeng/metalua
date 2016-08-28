@@ -17,10 +17,11 @@ struct LuaTable;
 
 template<typename T>
 struct UserData {
-    UserData(T object) : m_object(object) {}
-    ~UserData() {}
 
     T m_object;
+
+    UserData(T object) : m_object(object) {}
+    ~UserData() {}
 };
 
 /* read a value from lua to cpp */
@@ -141,6 +142,27 @@ inline void VaradicPushToLua(lua_State* L, T t, Args... args) {
     PushToLua<T>(L, t);
     VaradicPushToLua(L, args...);
 }
+
+/* user functions */
+
+struct AutoStackRecover {
+
+    lua_State* m_luaState{ nullptr };
+    int m_top{ 0 };
+
+    AutoStackRecover(lua_State* luaState)
+        : m_luaState(luaState) {
+        m_top = lua_gettop(m_luaState);
+    }
+
+    ~AutoStackRecover() {
+        lua_settop(m_luaState, m_top);
+    }
+};
+
+int luaU_ErrorFunc(lua_State* L);
+
+int GetErrorFunc(lua_State* L);
 
 DECL_NAMESPACE_METALUA_END
 
