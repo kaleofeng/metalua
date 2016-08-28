@@ -83,6 +83,36 @@ struct CppToLua {
 };
 
 template<typename T>
+struct CppToLua<const T> {
+    static void ConvertUserdata(lua_State* L, const T object) {
+        auto memory = lua_newuserdata(L, sizeof(T));
+        new(memory) UserData<const T>(object);
+        luaL_getmetatable(L, ClassInfo<T>::Name());
+        lua_setmetatable(L, -2);
+    }
+};
+
+template<typename T>
+struct CppToLua<T*> {
+    static void ConvertUserdata(lua_State* L, T* object) {
+        auto memory = lua_newuserdata(L, sizeof(T));
+        new(memory) UserData<T*>(object);
+        luaL_getmetatable(L, ClassInfo<T>::Name());
+        lua_setmetatable(L, -2);
+    }
+};
+
+template<typename T>
+struct CppToLua<const T*> {
+    static void ConvertUserdata(lua_State* L, const T* object) {
+        auto memory = lua_newuserdata(L, sizeof(T));
+        new(memory) UserData<const T*>(object);
+        luaL_getmetatable(L, ClassInfo<T>::Name());
+        lua_setmetatable(L, -2);
+    }
+};
+
+template<typename T>
 inline void PushToLua(lua_State* L, T data) {
     CppToLua<T>::ConvertUserdata(L, data);
 };

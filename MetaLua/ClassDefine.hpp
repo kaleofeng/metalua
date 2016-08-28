@@ -96,12 +96,39 @@ struct MethodData##N : public GenericMethod { \
     } \
 };
 
+#define DEF_CONSTMETHOD_DATA(N) \
+template<CTYPENAME_LIST_##N> \
+struct ConstMethodData##N : public GenericMethod { \
+    typedef R (T::*Method)(CPARAM_TYPE_LIST_##N) const; \
+    Method m_method; \
+    ConstMethodData##N(Method method) : m_method(method) {} \
+    int Call(lua_State* L) override final { \
+        auto object = ReadToCpp<T*>(L, 1); \
+        auto result = (object->*m_method)(CARG_LIST_##N); \
+        PushToLua<R>(L, result); \
+        return 1; \
+    } \
+};
+
 #define DEF_VOID_METHOD_DATA(N) \
 template<CTYPENAME_VOID_LIST_##N> \
 struct MethodData##N<CTYPE_VOID_LIST_##N> : public GenericMethod { \
     typedef void (T::*Method)(CPARAM_TYPE_LIST_##N); \
     Method m_method; \
     MethodData##N(Method method) : m_method(method) {} \
+    int Call(lua_State* L) override final { \
+        auto object = ReadToCpp<T*>(L, 1); \
+        (object->*m_method)(CARG_LIST_##N); \
+        return 0; \
+    } \
+};
+
+#define DEF_VOID_CONSTMETHOD_DATA(N) \
+template<CTYPENAME_VOID_LIST_##N> \
+struct ConstMethodData##N<CTYPE_VOID_LIST_##N> : public GenericMethod { \
+    typedef void (T::*Method)(CPARAM_TYPE_LIST_##N) const;\
+    Method m_method; \
+    ConstMethodData##N(Method method) : m_method(method) {} \
     int Call(lua_State* L) override final { \
         auto object = ReadToCpp<T*>(L, 1); \
         (object->*m_method)(CARG_LIST_##N); \
@@ -124,6 +151,20 @@ inline void RegisterMethodToLua(lua_State* L, const char* name, \
     luaL_getmetatable(L, ClassInfo<T>::Name()); \
     lua_pushstring(L, name); \
     typedef MethodData##N<CTYPE_LIST_##N> MethodData_t; \
+    auto memory = lua_newuserdata(L, sizeof(MethodData_t)); \
+    new(memory) MethodData_t(method); \
+    lua_pushcclosure(L, &ProxyMethodCall<T>, 1); \
+    lua_rawset(L, -3); \
+    lua_pop(L, 1); \
+}
+
+#define DEF_REGISTER_CONSTMETHOD(N) \
+template<CTYPENAME_LIST_##N> \
+inline void RegisterMethodToLua(lua_State* L, const char* name, \
+    R (T::*method)(CPARAM_TYPE_LIST_##N) const) { \
+    luaL_getmetatable(L, ClassInfo<T>::Name()); \
+    lua_pushstring(L, name); \
+    typedef ConstMethodData##N<CTYPE_LIST_##N> MethodData_t; \
     auto memory = lua_newuserdata(L, sizeof(MethodData_t)); \
     new(memory) MethodData_t(method); \
     lua_pushcclosure(L, &ProxyMethodCall<T>, 1); \
@@ -163,6 +204,39 @@ DEF_REGISTER_METHOD(3)
 DEF_REGISTER_METHOD(2)
 DEF_REGISTER_METHOD(1)
 DEF_REGISTER_METHOD(0)
+
+DEF_CONSTMETHOD_DATA(9)
+DEF_CONSTMETHOD_DATA(8)
+DEF_CONSTMETHOD_DATA(7)
+DEF_CONSTMETHOD_DATA(6)
+DEF_CONSTMETHOD_DATA(5)
+DEF_CONSTMETHOD_DATA(4)
+DEF_CONSTMETHOD_DATA(3)
+DEF_CONSTMETHOD_DATA(2)
+DEF_CONSTMETHOD_DATA(1)
+DEF_CONSTMETHOD_DATA(0)
+
+DEF_VOID_CONSTMETHOD_DATA(9)
+DEF_VOID_CONSTMETHOD_DATA(8)
+DEF_VOID_CONSTMETHOD_DATA(7)
+DEF_VOID_CONSTMETHOD_DATA(6)
+DEF_VOID_CONSTMETHOD_DATA(5)
+DEF_VOID_CONSTMETHOD_DATA(4)
+DEF_VOID_CONSTMETHOD_DATA(3)
+DEF_VOID_CONSTMETHOD_DATA(2)
+DEF_VOID_CONSTMETHOD_DATA(1)
+DEF_VOID_CONSTMETHOD_DATA(0)
+
+DEF_REGISTER_CONSTMETHOD(9)
+DEF_REGISTER_CONSTMETHOD(8)
+DEF_REGISTER_CONSTMETHOD(7)
+DEF_REGISTER_CONSTMETHOD(6)
+DEF_REGISTER_CONSTMETHOD(5)
+DEF_REGISTER_CONSTMETHOD(4)
+DEF_REGISTER_CONSTMETHOD(3)
+DEF_REGISTER_CONSTMETHOD(2)
+DEF_REGISTER_CONSTMETHOD(1)
+DEF_REGISTER_CONSTMETHOD(0)
 
 /* register class member */
 

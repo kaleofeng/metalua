@@ -166,7 +166,7 @@ void RegisterVariableToLua(lua_State* L, const char* name, V variable) {
 /* get global variable */
 
 template<typename V>
-V GetGlobalVariable(lua_State* L, const char* name) {
+V GetVariableInLua(lua_State* L, const char* name) {
     lua_getglobal(L, name);
     return ReadToCpp<V>(L, -1);
 }
@@ -174,7 +174,7 @@ V GetGlobalVariable(lua_State* L, const char* name) {
 /* invoke global function */
 
 template<typename R, typename... Args>
-R InvokeGlobalFunction(lua_State* L, const char* name, Args... args) {
+R InvokeFunctionInLua(lua_State* L, const char* name, Args... args) {
     lua_getglobal(L, name);
     if (!lua_isfunction(L, -1)) {
         lua_pushstring(L, "This arg is not a function.\n");
@@ -189,10 +189,10 @@ R InvokeGlobalFunction(lua_State* L, const char* name, Args... args) {
     return ReadToCpp<R>(L, -1);
 }
 
-/* invoke table function */
+/* invoke table method */
 
 template<typename R, typename... Args>
-R InvokeTableFunction(lua_State* L, const char* table, const char* name, Args... args) {
+R InvokeMethodInLua(lua_State* L, const char* table, const char* name, Args... args) {
     lua_getglobal(L, table);
     if (!lua_istable(L, -1)) {
         lua_pushstring(L, "This arg is not a table.\n");

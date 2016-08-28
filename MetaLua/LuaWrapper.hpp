@@ -62,12 +62,17 @@ public:
 
     template<typename R, typename... Args>
     R InvokeFunction(const char* name, Args... args) {
-        return InvokeGlobalFunction<R, Args...>(m_luaState, name, args...);
+        return InvokeFunctionInLua<R, Args...>(m_luaState, name, args...);
+    }
+
+    template<typename R, typename... Args>
+    R InvokeMethod(const char* table, const char* name, Args... args) {
+        return InvokeMethodInLua<R, Args...>(m_luaState, table, name, args...);
     }
 
     template<typename V>
     V GetVariable(const char* name) {
-        return GetGlobalVariable<V>(m_luaState, name);
+        return GetVariableInLua<V>(m_luaState, name);
     }
 
     LuaTable GetTable(const char* name) {
