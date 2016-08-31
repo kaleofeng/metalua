@@ -175,8 +175,8 @@ V GetVariableInLua(lua_State* L, const char* name) {
 
 template<typename R, typename... Args>
 R InvokeFunctionInLua(lua_State* L, const char* name, Args... args) {
-    AutoStackRecover asr(L);
-    const auto errorFunc = GetErrorFunc(L);
+    StackAutoRecover sar(L);
+    const auto errFunc = GetErrorFunction(L);
 
     lua_getglobal(L, name);
     if (!lua_isfunction(L, -1)) {
@@ -187,7 +187,7 @@ R InvokeFunctionInLua(lua_State* L, const char* name, Args... args) {
     VaradicPushToLua(L, args...);
 
     const auto size = sizeof...(args);
-    lua_pcall(L, size, 1, errorFunc);
+    lua_pcall(L, size, 1, errFunc);
 
     return ReadToCpp<R>(L, -1);
 }
@@ -196,8 +196,8 @@ R InvokeFunctionInLua(lua_State* L, const char* name, Args... args) {
 
 template<typename R, typename... Args>
 R InvokeMethodInLua(lua_State* L, const char* table, const char* name, Args... args) {
-    AutoStackRecover asr(L);
-    const auto errorFunc = GetErrorFunc(L);
+    StackAutoRecover sar(L);
+    const auto errFunc = GetErrorFunction(L);
 
     lua_getglobal(L, table);
     if (!lua_istable(L, -1)) {
@@ -215,7 +215,7 @@ R InvokeMethodInLua(lua_State* L, const char* table, const char* name, Args... a
     VaradicPushToLua(L, args...);
 
     const auto size = sizeof...(args) + 1;
-    lua_pcall(L, size, 1, errorFunc);
+    lua_pcall(L, size, 1, errFunc);
 
     return ReadToCpp<R>(L, -1);
 }

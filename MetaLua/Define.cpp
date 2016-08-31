@@ -9,7 +9,7 @@ DECL_NAMESPACE_METALUA_BEGIN
 
 template<>
 void ReadToCpp(lua_State* L, int index) {
-    lua_remove(L, index);
+
 }
 
 template<>
@@ -221,7 +221,7 @@ static int GetDebugInfo(lua_Debug& dbg, char* buf, int len) {
     return n;
 }
 
-int luaU_ErrorFunc(lua_State* L) {
+int luaU_ErrorFunction(lua_State* L) {
     int n = 0;
     std::string str;
     char buf[1024]{ '\0' };
@@ -242,7 +242,7 @@ int luaU_ErrorFunc(lua_State* L) {
     return LUA_OK;
 }
 
-int GetErrorFunc(lua_State* L) {
+int GetErrorFunction(lua_State* L) {
     const auto userData = reinterpret_cast<LuaWrapper::UserData*>(G(L)->ud);
     lua_rawgeti(L, LUA_REGISTRYINDEX, userData->m_errroFunc);
     return lua_gettop(L);

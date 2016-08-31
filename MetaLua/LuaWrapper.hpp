@@ -35,6 +35,8 @@ public:
 
     void DoScript(const char* file);
 
+    void DoString(const char* text);
+
 public:
     template<typename T, typename P>
     void InheritParent() {

@@ -19,8 +19,8 @@ bool LuaWrapper::Initialize() {
     luaL_openlibs(m_luaState);
 
     {
-        AutoStackRecover asr(m_luaState);
-        lua_pushcclosure(m_luaState, luaU_ErrorFunc, 0);
+        StackAutoRecover asr(m_luaState);
+        lua_pushcclosure(m_luaState, luaU_ErrorFunction, 0);
         m_userData.m_errroFunc = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
     }
@@ -32,7 +32,23 @@ void LuaWrapper::Finalize() {
 }
 
 void LuaWrapper::DoScript(const char* file) {
-    luaL_dofile(m_luaState, file);
+    StackAutoRecover sar(m_luaState);
+    const auto errFunc = GetErrorFunction(m_luaState);
+
+    const auto result = luaL_loadfile(m_luaState, file);
+    if (result == LUA_OK) {
+        lua_pcall(m_luaState, 0, LUA_MULTRET, errFunc);
+    }
+}
+
+void LuaWrapper::DoString(const char* text) {
+    StackAutoRecover sar(m_luaState);
+    const auto errFunc = GetErrorFunction(m_luaState);
+
+    const auto result = luaL_loadstring(m_luaState, text);
+    if (result == LUA_OK) {
+        lua_pcall(m_luaState, 0, LUA_MULTRET, errFunc);
+    }
 }
 
 DECL_NAMESPACE_METALUA_END
