@@ -36,11 +36,23 @@ struct LuaTable {
         return ReadToCpp<T>(m_luaState, -1);
     }
 
+	template<typename T>
+	T Get(int key) const {
+		lua_geti(m_luaState, m_index, key);
+		return ReadToCpp<T>(m_luaState, -1);
+	}
+
     template<typename T>
     void Set(const char* key, T value) {
         PushToLua<T>(m_luaState, value);
         lua_setfield(m_luaState, m_index, key);
     }
+
+	template<typename T>
+	void Set(int key, T value) {
+		PushToLua<T>(m_luaState, value);
+		lua_seti(m_luaState, m_index, key);
+	}
 };
 
 DECL_NAMESPACE_METALUA_END
