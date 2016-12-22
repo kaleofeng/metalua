@@ -53,7 +53,7 @@ void LuaWrapper::DoString(const char* text) {
 
 DECL_NAMESPACE_METALUA_END
 
-NS_METALUA::LuaWrapper* g_luaWrapper = nullptr;
+thread_local NS_METALUA::LuaWrapper* g_luaWrapper = nullptr;
 
 bool LuaStartup() {
     g_luaWrapper = new NS_METALUA::LuaWrapper();

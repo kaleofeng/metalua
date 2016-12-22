@@ -105,7 +105,7 @@ public:
 
 DECL_NAMESPACE_METALUA_END
 
-extern NS_METALUA::LuaWrapper* g_luaWrapper;
+extern thread_local NS_METALUA::LuaWrapper* g_luaWrapper;
 extern bool LuaStartup();
 extern void LuaCleanup();
 
