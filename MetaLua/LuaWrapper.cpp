@@ -31,6 +31,14 @@ void LuaWrapper::Finalize() {
     lua_close(m_luaState);
 }
 
+void LuaWrapper::AddPackagePath(const char* path) {
+    StackAutoRecover sar(m_luaState);
+    lua_getglobal(m_luaState, "package");
+    lua_getfield(m_luaState, -1, "path");
+    lua_pushfstring(m_luaState, "%s;%s/?.lua", lua_tostring(m_luaState, -1), path);
+    lua_setfield(m_luaState, -3, "path");
+}
+
 void LuaWrapper::DoScript(const char* file) {
     StackAutoRecover sar(m_luaState);
     const auto errFunc = GetErrorFunction(m_luaState);

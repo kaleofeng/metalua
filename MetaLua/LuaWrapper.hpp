@@ -33,11 +33,16 @@ public:
 
     void Finalize();
 
+    void AddPackagePath(const char* path);
+
     void DoScript(const char* file);
 
     void DoString(const char* text);
 
-public:
+    lua_State* LuaState() {
+        return m_luaState;
+    }
+
     template<typename T, typename P>
     void InheritParent() {
         InheritParentToLua<T, P>(m_luaState);
@@ -96,10 +101,6 @@ public:
         }
         const auto index = lua_gettop(m_luaState);
         return LuaTable(m_luaState, index);
-    }
-
-    lua_State* GetLuaState() {
-        return m_luaState;
     }
 };
 
